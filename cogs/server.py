@@ -44,3 +44,12 @@ class Server(Cog):
     async def on_guild_join(self, ctx: Context, guild: discord.Guild):
         """Creates the Server model when bot joins the server"""
         pass
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild: discord.Guild):
+        """Delete the associated server model for this server"""
+        pass
+
+
+def setup(bot):
+    bot.add_cog(Server(bot))

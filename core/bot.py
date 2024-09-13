@@ -1,4 +1,5 @@
 from os import environ, getenv
+from glob import glob
 
 import discord
 from discord.ext import commands
@@ -39,6 +40,10 @@ class BansheeBot(commands.Bot):
         return Context(self, interaction)
 
     def run(self, debug: bool = False, cogs: list[str] | None = None) -> None:
+        default_cog_list = ["cogs.raid", "cogs.server"]
+        for cog in default_cog_list:
+            self.load_extension(cog)
+
         if debug:
             return super().run(getenv("DEBUG_TOKEN", getenv("TOKEN")))
 

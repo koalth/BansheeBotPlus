@@ -44,3 +44,7 @@ class Raid(Cog):
         member: Optional[discord.Member] = None,
     ):
         pass
+
+
+def setup(bot):
+    bot.add_cog(Raid(bot))
