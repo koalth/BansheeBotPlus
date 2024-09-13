@@ -5,7 +5,7 @@ from discord.ext import commands
 from tortoise import Tortoise
 
 from .context import Context
-from .models import GuildModel, CharacterModel, SettingModel
+from .models import ServerModel, CharacterModel
 
 class BansheeBot(commands.Bot):
     
