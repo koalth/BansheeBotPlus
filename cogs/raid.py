@@ -33,6 +33,7 @@ class Raid(Cog):
     )
     @discord.option(
         name="member",
+        input_type=discord.Member,
         description="Server member that the character belongs to. Default is the member who used this command",
     )
     async def add_raid(
@@ -41,7 +42,7 @@ class Raid(Cog):
         name: str,
         realm: str,
         region: str,
-        member: Optional[discord.Member] = None,
+        member: Optional[discord.Member],
     ):
         pass
 
