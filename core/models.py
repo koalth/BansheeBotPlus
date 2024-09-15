@@ -22,20 +22,21 @@ class ServerModel(Model):
     
     class Meta:
         table = "servers"
-    
+
 """ Represents the World of Warcraft Character tied to a user """
 class CharacterModel(Model):
     id = fields.IntField(primary_key=True)
     discord_user_id = fields.IntField()
-    
+
     name = fields.TextField()
     realm = fields.TextField()
     region = fields.TextField()
 
+    item_level = fields.IntField()
+
     raid_roster: fields.ForeignKeyNullableRelation[ServerModel] = fields.ForeignKeyField(
         "models.ServerModel", related_name="raiders"
     )
-    
+
     class Meta:
         table = "characters"
-        
