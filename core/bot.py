@@ -1,4 +1,5 @@
 from os import environ, getenv
+from dotenv import load_dotenv
 from glob import glob
 
 import discord
@@ -8,15 +9,19 @@ from tortoise import Tortoise
 from .context import Context
 from .models import ServerModel, CharacterModel
 
+load_dotenv()
+
+
 class BansheeBot(commands.Bot):
 
     def __init__(self) -> None:
         super().__init__(
             intents=discord.Intents(
-                members=True,
+                guilds=True,
                 messages=True,
+                guild_messages=True,
                 message_content=True,
-                guilds=True
+                members=True,
             )
         )
 
@@ -44,16 +49,19 @@ class BansheeBot(commands.Bot):
         for cog in default_cog_list:
             self.load_extension(cog)
 
-        if debug:
-            return super().run(getenv("DEBUG_TOKEN", getenv("TOKEN")))
+        token = getenv("DISCORD_TOKEN")
+        if token is None:
+            raise Exception("Token was none")
 
-        super().run(getenv("TOKEN"))
+        super().run(getenv("DISCORD_TOKEN"))
 
-    async def on_application_command_error(self, ctx: discord.ApplicationContext, error: Exception) -> None:
+    async def on_application_command_error(
+        self, ctx: discord.ApplicationContext, error: Exception
+    ) -> None:
         await ctx.respond(
             embed=discord.Embed(
                 title=error.__class__.__name__,
                 description=str(error),
-                color=discord.Color.red()
+                color=discord.Color.red(),
             )
         )

@@ -1,18 +1,19 @@
-import os
+from os import getenv
 import dotenv
 
 from discord import ApplicationContext, Color, Embed
 from discord.utils import utcnow
 
-from ..api import LichClient, CharacterProfileResponse
+from .api import LichClient, CharacterProfileResponse
+
 
 class Context(ApplicationContext):
 
     async def getCharacterProfile(
         self, name: str, realm: str, region: str
     ) -> CharacterProfileResponse:
-        client_id = ""
-        client_secret = ""
+        client_id = getenv("BLIZZARD_CLIENT_ID")
+        client_secret = getenv("BLIZZARD_CLIENT_SECRET")
 
         client = LichClient(client_id, client_secret)
 
@@ -25,27 +26,21 @@ class Context(ApplicationContext):
             title=title,
             description=description,
             timestamp=utcnow(),
-            color=Color.green()
+            color=Color.green(),
         )
 
         return await self.respond(embed=embed, **kwargs)
 
     async def exception(self, title: str, description: str | None = None, **kwargs):
         embed = Embed(
-            title=title,
-            description=description,
-            timestamp=utcnow(),
-            color=Color.red()
+            title=title, description=description, timestamp=utcnow(), color=Color.red()
         )
 
         return await self.respond(embed=embed, **kwargs)
 
     async def info(self, title: str, description: str | None = None, **kwargs):
         embed = Embed(
-            title=title,
-            description=description,
-            timestamp=utcnow(),
-            color=Color.blue()
+            title=title, description=description, timestamp=utcnow(), color=Color.blue()
         )
 
         return await self.respond(embed=embed, **kwargs)
