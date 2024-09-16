@@ -1,6 +1,9 @@
 from os import getenv
 import dotenv
 
+from typing import Optional
+
+import discord
 from discord import ApplicationContext, Color, Embed
 from discord.utils import utcnow
 
@@ -20,6 +23,17 @@ class Context(ApplicationContext):
         profile = await client.getCharacterProfile(name, realm, region)
 
         return profile
+
+    def _get_role_name_or_empty(self, role_id: Optional[int]) -> str:
+        if role_id is None:
+            return "`None`"
+
+        role = self.guild.get_role()
+
+        if role is None:
+            return "`None`"
+
+        return f"`{role.name}`"
 
     async def success(self, title: str, description: str | None = None, **kwargs):
         embed = Embed(

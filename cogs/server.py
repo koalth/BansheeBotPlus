@@ -3,6 +3,8 @@ from discord.utils import get
 from discord.ext import commands
 from discord import guild_only
 
+from typing import Optional
+
 from core import Cog, Context, ServerModel
 
 
@@ -17,6 +19,16 @@ class Server(Cog):
         server = await ServerModel.get(discord_guild_id=ctx.guild_id)
 
         embed = discord.Embed(title=f"Server Settings", color=discord.Color.blurple())
+
+        embed.add_field(
+            name="Manager Role",
+            value=ctx._get_role_name_or_empty(server.manager_role_id),
+        )
+
+        embed.add_field(
+            name="Raid Role",
+            value=ctx._get_role_name_or_empty(server.raid_role_id),
+        )
 
         return await ctx.respond(embed=embed)
 
@@ -44,7 +56,7 @@ class Server(Cog):
         )
 
     @discord.command(
-        name="itemlevel",
+        name="setitemlevel",
         description="Set the item level requirement for the raid roster",
     )
     @guild_only()
@@ -89,7 +101,8 @@ class Server(Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
         """Delete the associated server model for this server"""
-        pass
+        db_guild = await ServerModel.get(iscord_guild_id=guild.id)
+        await ServerModel.delete(db_guild)
 
 
 def setup(bot):

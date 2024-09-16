@@ -20,10 +20,12 @@ class Raid(Cog):
         )
 
         raider_names = "\n".join([raider.name for raider in server.raiders])
+        class_specs = "\n".join([f"{raider.class_name}" for raider in server.raiders])
 
         embed = discord.Embed(title="Raid Roster", color=discord.Color.blue())
 
-        embed.add_field(name="Raiders", value=raider_names)
+        embed.add_field(name="Raiders", value=raider_names, inline=True)
+        embed.add_field(name="Class", value=class_specs, inline=True)
 
         return await ctx.respond(embed=embed)
 
@@ -49,6 +51,9 @@ class Raid(Cog):
 
         item_levels = "\n".join(item_levels_pre)
         raider_names = "\n".join([raider.name for raider in server.raiders])
+        class_specs = "\n".join(
+            [f"{raider.class_name}/{raider.spec_name}" for raider in server.raiders]
+        )
 
         embed = discord.Embed(
             title="Raid Roster Ready Check!", color=discord.Color.red()
@@ -56,6 +61,7 @@ class Raid(Cog):
 
         embed.add_field(name="Members", value=raider_names, inline=True)
         embed.add_field(name="Item Level", value=item_levels, inline=True)
+        embed.add_field(name="Class/Spec", value=class_specs, inline=True)
 
         return await ctx.respond(embed=embed)
 
@@ -71,19 +77,12 @@ class Raid(Cog):
         description="Region of the World of Warcraft character",
         choices=["us"],
     )
-    @discord.option(
-        name="member",
-        input_type=discord.Member,
-        description="Server member that the character belongs to. Default is the member who used this command",
-        required=False,
-    )
     async def register(
         self,
         ctx: Context,
         name: str,
         realm: str,
         region: str,
-        member: discord.Member,
     ):
 
         # check if character already exists
@@ -98,8 +97,6 @@ class Raid(Cog):
         server = await ServerModel.get(discord_guild_id=ctx.guild_id)
 
         discord_id = ctx.author.id
-        if member is not None:
-            discord_id = member.id
 
         character = CharacterModel(
             discord_user_id=discord_id,
@@ -108,6 +105,8 @@ class Raid(Cog):
             region=profile.region,
             item_level=profile.item_level,
             raid_roster_id=server.id,
+            class_name=profile.class_name,
+            spec_name=profile.active_spec,
         )
 
         await character.save()
